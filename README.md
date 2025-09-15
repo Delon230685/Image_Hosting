@@ -1,50 +1,56 @@
-# 🖼️ Image Hosting Service
-
-[![Python 3.13](https://img.shields.io/badge/python-3.13-blue.svg)](https://www.python.org/downloads/release/python-312/)
-[![Docker](https://img.shields.io/badge/docker-✓-blue.svg)](https://www.docker.com/)
-[![Nginx](https://img.shields.io/badge/nginx-✓-brightgreen.svg)](https://nginx.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+🖼️ Image Hosting Service
+https://img.shields.io/badge/python-3.13-blue.svg
+https://img.shields.io/badge/docker-%E2%9C%93-blue.svg
+https://img.shields.io/badge/nginx-%E2%9C%93-brightgreen.svg
+https://img.shields.io/badge/License-MIT-yellow.svg
+https://img.shields.io/badge/code%2520style-black-000000.svg
 
 Сервис для хранения и обмена изображениями с простым веб-интерфейсом и API. Пользователи могут загружать изображения и получать прямые ссылки для分享 в соцсетях, блогах или мессенджерах.
 
-## ✨ Возможности
+✨ Возможности
+Загрузка изображений через веб-интерфейс или API
 
-- **Загрузка изображений** через веб-интерфейс или API
-- **Поддержка форматов**: JPG, JPG, PNG, GIF
-- **Автоматическая генерация** уникальных имен файлов
-- **Прямые ссылки** на изображения
-- **Логирование** всех операций
-- **Docker-контейнеризация** для простого развертывания
-- **Nginx** для быстрой раздачи статических файлов
+Поддержка форматов: JPG, JPEG, PNG, GIF
 
-## 🛠️ Технологии
+Автоматическая генерация уникальных имен файлов
 
-[![Pillow](https://img.shields.io/badge/Pillow-10.0-lightgrey.svg)](https://python-pillow.org/)
-[![Uvicorn](https://img.shields.io/badge/uvicorn-0.24-ff69b4.svg)](https://www.uvicorn.org/)
-[![Docker Compose](https://img.shields.io/badge/docker--compose-2.0-blue.svg)](https://docs.docker.com/compose/)
-[![Alpine Linux](https://img.shields.io/badge/alpine-3.18-0d597f.svg)](https://alpinelinux.org/)
+Прямые ссылки на изображения
 
-- **Backend**: Python 3.13
-- **Web Server**: Nginx
-- **Контейнеризация**: Docker + Docker Compose
-- **Хранение данных**: Docker Volumes
-- **Обработка изображений**: Pillow
+Логирование всех операций
 
-## 📦 Установка и запуск
+Docker-контейнеризация для простого развертывания
 
-### Предварительные требования
+Nginx для быстрой раздачи статических файлов
 
-[![Docker 20.10+](https://img.shields.io/badge/docker-20.10%2B-2496ED.svg)](https://docs.docker.com/engine/install/)
-[![Docker Compose 2.0+](https://img.shields.io/badge/docker--compose-2.0%2B-2496ED.svg)](https://docs.docker.com/compose/install/)
+🛠️ Технологии
+https://img.shields.io/badge/Pillow-10.0-lightgrey.svg
+https://img.shields.io/badge/uvicorn-0.24-ff69b4.svg
+https://img.shields.io/badge/docker--compose-2.0-blue.svg
+https://img.shields.io/badge/alpine-3.18-0d597f.svg
 
-- Docker Engine 20.10+
-- Docker Compose 2.0+
+Backend: Python 3.13
 
-### Быстрый старт
+Web Server: Nginx
 
-1. Клонируйте репозиторий:
-```bash
+Контейнеризация: Docker + Docker Compose
+
+Хранение данных: Docker Volumes
+
+Обработка изображений: Pillow
+
+📦 Установка и запуск
+Предварительные требования
+https://img.shields.io/badge/docker-20.10%252B-2496ED.svg
+https://img.shields.io/badge/docker--compose-2.0%252B-2496ED.svg
+
+Docker Engine 20.10+
+
+Docker Compose 2.0+
+
+Быстрый старт
+Клонируйте репозиторий:
+
+bash
 git clone <repository-url>
 cd image-hosting
 Запустите сервис:
@@ -85,23 +91,23 @@ http://localhost:8080/images/a1b2c3d4e5.jpg
 📁 Структура проекта
 text
 image-hosting/
-├── app/                # Основной файл Python
-├── image/              # Папка для хранения загруженных картинок пользователем
-├── logs/               # Папка для хранения логов
-├── static/             # Папка для хранения статических файлов
-│   └── assets          # Папка для хранения дополнительных статических ресурсов
-│       └── image/      # Папка с файлами для фона
-│       └── index.html  # Uлавная HTML-страница веб-приложени
-│       └── script.js   # Подключение JavaScript
-│       └── style.css   # Подключение стилей CSS
-├── requirements.txt    # Зависимости Python
-├── Dockerfile          # Конфигурация образа приложения
-├── docker-compose.yml  # Docker Compose конфигурация
-├── nginx.conf          # Конфигурация Nginx
-├── nginx/              # Папка для статистики
-│   └── conf.d          # Дополнительная конфигурация
-│       └── default.conf         # Прямое обслуживание статических файлов
-└── README.md           # Документация
+├── app/                 # Основной файл Python
+├── image/               # Папка для хранения загруженных картинок пользователем
+├── logs/                # Папка для хранения логов
+├── static/              # Папка для хранения статических файлов
+│   └── assets           # Папка для хранения дополнительных статических ресурсов
+│       ├── image/       # Папка с файлами для фона
+│       ├── index.html   # Главная HTML-страница веб-приложения
+│       ├── script.js    # Подключение JavaScript
+│       └── style.css    # Подключение стилей CSS
+├── requirements.txt     # Зависимости Python
+├── Dockerfile           # Конфигурация образа приложения
+├── docker-compose.yml   # Docker Compose конфигурация
+├── nginx.conf           # Конфигурация Nginx
+├── nginx/               # Папка для статистики
+│   └── conf.d           # Дополнительная конфигурация
+│       └── default.conf # Прямое обслуживание статических файлов
+└── README.md            # Документация
 ⚙️ Конфигурация
 Переменные окружения (.env)
 ini
@@ -114,9 +120,9 @@ NGINX_PORT=8080
 # Лимит размера файла (в байтах)
 MAX_FILE_SIZE=5242880
 Поддерживаемые форматы
-https://img.shields.io/badge/JPG-%E2%9C%93-yellow.svg
-https://img.shields.io/badge/PNG-%E2%9C%93-blue.svg
-https://img.shields.io/badge/GIF-%E2%9C%93-lightgrey.svg
+https://img.shields.io/badge/JPG-%25E2%259C%2593-yellow.svg
+https://img.shields.io/badge/PNG-%25E2%259C%2593-blue.svg
+https://img.shields.io/badge/GIF-%25E2%259C%2593-lightgrey.svg
 
 JPEG/JPG (.jpg, .jpeg)
 
@@ -171,7 +177,6 @@ https://img.shields.io/badge/docker--compose-deploy-2496ED.svg
 Сервис состоит из двух контейнеров:
 
 app
-
 Порт: 8000 (внутренний)
 
 Volume: /images, /logs
@@ -184,7 +189,7 @@ nginx
 Volume: /images
 
 🛡️ Безопасность
-https://img.shields.io/badge/security-%E2%9C%93-green.svg
+https://img.shields.io/badge/security-%25E2%259C%2593-green.svg
 
 Валидация MIME-типов файлов
 
@@ -197,7 +202,7 @@ Nginx настроен для безопасной раздачи статиче
 Автоматическая генерация имен файлов предотвращает перезапись
 
 📈 Производительность
-https://img.shields.io/badge/performance-%E2%9A%A1-success.svg
+https://img.shields.io/badge/performance-%25E2%259A%25A1-success.svg
 
 Nginx обеспечивает высокоскоростную раздачу статических файлов
 
