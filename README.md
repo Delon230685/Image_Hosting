@@ -1,7 +1,6 @@
 # 🖼️ Image Hosting Service
 
 [![Python 3.13](https://img.shields.io/badge/python-3.13-blue.svg)](https://www.python.org/downloads/release/python-312/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.104-green.svg)](https://fastapi.tiangolo.com/)
 [![Docker](https://img.shields.io/badge/docker-✓-blue.svg)](https://www.docker.com/)
 [![Nginx](https://img.shields.io/badge/nginx-✓-brightgreen.svg)](https://nginx.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
