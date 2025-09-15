@@ -64,6 +64,7 @@ image-hosting/
 ├── docker-compose.yml   # Docker Compose конфигурация
 ├── nginx/               # Папка для статистики
         └── nginx.conf   # Конфигурация Nginx
+├── logger_config.py     # Настройки логера
 ├── .gitignore           # Список файлов и папок не отслеживаемых Git.
 └── README.md            # Документация
 ```
