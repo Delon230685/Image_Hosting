@@ -74,7 +74,7 @@ image-hosting/
 [![GIF](https://img.shields.io/badge/GIF-lightgrey.svg)]()
 
 ### Ограничения:
-[![max-size-5MB](https://img.shields.io/badge/max--size-5MB-red.svg)
+[![max-size-5MB](https://img.shields.io/badge/max--size-5MB-red.svg)]()
 
 ## 📊 Логирование:
 - Сервис ведет детальное логирование всех операций:
@@ -84,8 +84,8 @@ image-hosting/
 - Логи сохраняются в директории /logs и сохраняются между перезапусками.
 
 ## 🐳 Docker контейнеры:
-[![docker-build](https://img.shields.io/badge/docker-build-2496ED.svg)
-[![docker--compose-deploy](https://img.shields.io/badge/docker--compose-deploy-2496ED.svg)
+[![docker-build](https://img.shields.io/badge/docker-build-2496ED.svg)]()
+[![docker--compose-deploy](https://img.shields.io/badge/docker--compose-deploy-2496ED.svg)]()
 ## Сервис состоит из двух контейнеров:
 # app
 - Порт: 8000 (внутренний)
@@ -96,7 +96,7 @@ image-hosting/
 - Volume: /images
 
 ## 🛡️ Безопасность:
-[![security](https://img.shields.io/badge/security-green.svg)
+[![security](https://img.shields.io/badge/security-green.svg)]()
 - Валидация MIME-типов файлов
 - Проверка расширений файлов
 - Ограничение размера загружаемых файлов
@@ -104,7 +104,7 @@ image-hosting/
 - Автоматическая генерация имен файлов предотвращает перезапись
 
 ## 📈 Производительность:
-[![performance-success](https://img.shields.io/badge/performance-success.svg)
+[![performance-success](https://img.shields.io/badge/performance-success.svg)]()
 - Nginx обеспечивает высокоскоростную раздачу статических файлов
 - Оптимизированные Docker образы на основе Alpine Linux
 
@@ -117,4 +117,4 @@ docker-compose logs nginx
 # Статус контейнеров
 docker-compose ps
 
-Приятного использования! 🎉
+# Приятного использования! 🎉
