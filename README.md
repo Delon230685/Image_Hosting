@@ -1,56 +1,50 @@
-🖼️ Image Hosting Service
-https://img.shields.io/badge/python-3.13-blue.svg
-https://img.shields.io/badge/docker-%E2%9C%93-blue.svg
-https://img.shields.io/badge/nginx-%E2%9C%93-brightgreen.svg
-https://img.shields.io/badge/License-MIT-yellow.svg
-https://img.shields.io/badge/code%2520style-black-000000.svg
+# 🖼️ Image Hosting Service
+
+[![Python 3.13](https://img.shields.io/badge/python-3.13-blue.svg)](https://www.python.org/downloads/release/python-312/)
+[![Docker](https://img.shields.io/badge/docker-✓-blue.svg)](https://www.docker.com/)
+[![Nginx](https://img.shields.io/badge/nginx-✓-brightgreen.svg)](https://nginx.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 Сервис для хранения и обмена изображениями с простым веб-интерфейсом и API. Пользователи могут загружать изображения и получать прямые ссылки для分享 в соцсетях, блогах или мессенджерах.
 
-✨ Возможности
-Загрузка изображений через веб-интерфейс или API
+## ✨ Возможности
 
-Поддержка форматов: JPG, JPEG, PNG, GIF
+- **Загрузка изображений** через веб-интерфейс или API
+- **Поддержка форматов**: JPG, JPG, PNG, GIF
+- **Автоматическая генерация** уникальных имен файлов
+- **Прямые ссылки** на изображения
+- **Логирование** всех операций
+- **Docker-контейнеризация** для простого развертывания
+- **Nginx** для быстрой раздачи статических файлов
 
-Автоматическая генерация уникальных имен файлов
+## 🛠️ Технологии
 
-Прямые ссылки на изображения
+[![Pillow](https://img.shields.io/badge/Pillow-10.0-lightgrey.svg)](https://python-pillow.org/)
+[![Uvicorn](https://img.shields.io/badge/uvicorn-0.24-ff69b4.svg)](https://www.uvicorn.org/)
+[![Docker Compose](https://img.shields.io/badge/docker--compose-2.0-blue.svg)](https://docs.docker.com/compose/)
+[![Alpine Linux](https://img.shields.io/badge/alpine-3.18-0d597f.svg)](https://alpinelinux.org/)
 
-Логирование всех операций
+- **Backend**: Python 3.13
+- **Web Server**: Nginx
+- **Контейнеризация**: Docker + Docker Compose
+- **Хранение данных**: Docker Volumes
+- **Обработка изображений**: Pillow
 
-Docker-контейнеризация для простого развертывания
+## 📦 Установка и запуск
 
-Nginx для быстрой раздачи статических файлов
+### Предварительные требования
 
-🛠️ Технологии
-https://img.shields.io/badge/Pillow-10.0-lightgrey.svg
-https://img.shields.io/badge/uvicorn-0.24-ff69b4.svg
-https://img.shields.io/badge/docker--compose-2.0-blue.svg
-https://img.shields.io/badge/alpine-3.18-0d597f.svg
+[![Docker 20.10+](https://img.shields.io/badge/docker-20.10%2B-2496ED.svg)](https://docs.docker.com/engine/install/)
+[![Docker Compose 2.0+](https://img.shields.io/badge/docker--compose-2.0%2B-2496ED.svg)](https://docs.docker.com/compose/install/)
 
-Backend: Python 3.13
+- Docker Engine 20.10+
+- Docker Compose 2.0+
 
-Web Server: Nginx
+### Быстрый старт
 
-Контейнеризация: Docker + Docker Compose
-
-Хранение данных: Docker Volumes
-
-Обработка изображений: Pillow
-
-📦 Установка и запуск
-Предварительные требования
-https://img.shields.io/badge/docker-20.10%252B-2496ED.svg
-https://img.shields.io/badge/docker--compose-2.0%252B-2496ED.svg
-
-Docker Engine 20.10+
-
-Docker Compose 2.0+
-
-Быстрый старт
-Клонируйте репозиторий:
-
-bash
+1. Клонируйте репозиторий:
+```bash
 git clone <repository-url>
 cd image-hosting
 Запустите сервис:
@@ -61,6 +55,7 @@ docker-compose up --build
 
 text
 http://localhost:8080
+
 🚀 Использование
 Через веб-интерфейс
 Перейдите на главную страницу http://localhost:8080
