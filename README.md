@@ -44,7 +44,7 @@
 ### Быстрый старт
 
 1. Клонируйте репозиторий:
-```bash
+2. ```bash
 git clone <repository-url>
 cd image-hosting
 Запустите сервис:
