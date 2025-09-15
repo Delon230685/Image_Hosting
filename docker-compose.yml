@@ -6,24 +6,26 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./images:/images
+      - ./image:/images  # Папка image для загруженных картинок
       - ./logs:/logs
-      - ./static:/static
+      - ./static:/static # Вся статика в static
     networks:
       - app-network
+    restart: unless-stopped
 
   nginx:
     image: nginx:alpine
     ports:
       - "8080:80"
     volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d
-      - ./images:/images
-      - ./static:/static
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./image:/images    # Загруженные изображения
+      - ./static:/static   # Статические файлы
     depends_on:
       - app
     networks:
       - app-network
+    restart: unless-stopped
 
 networks:
   app-network:

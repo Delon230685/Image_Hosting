@@ -62,10 +62,8 @@ image-hosting/
 ├── requirements.txt     # Зависимости Python
 ├── Dockerfile           # Конфигурация образа приложения
 ├── docker-compose.yml   # Docker Compose конфигурация
-├── nginx.conf           # Конфигурация Nginx
 ├── nginx/               # Папка для статистики
-│   └── conf.d           # Дополнительная конфигурация
-│       └── default.conf # Прямое обслуживание статических файлов
+        └── nginx.conf   # ПКонфигурация Nginxв
 └── README.md            # Документация
 ```
 ### Поддерживаемые форматы:
