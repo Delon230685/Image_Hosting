@@ -1,15 +1,16 @@
 import os
 import json
-import logging
 import datetime
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import unquote
 from io import BytesIO
 from PIL import Image
 
+# Импорт настроек логгера
+from logger_config import get_logger
+
 # Константы
 UPLOAD_DIR = "/images"
-LOG_FILE = "/logs/app.log"
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5 МБ
 ALLOWED_EXTENSIONS = (".jpg", ".jpeg", ".png", ".gif")
 
@@ -29,25 +30,19 @@ CONTENT_TYPES = {
 
 # Создание необходимых директорий
 os.makedirs(UPLOAD_DIR, exist_ok=True)
-os.makedirs("/logs", exist_ok=True)
 
-# Настройка логирования
-logging.basicConfig(
-    filename=LOG_FILE,
-    level=logging.INFO,
-    format="[%(asctime)s] %(levelname)s: %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S"
-)
+# Инициализация логгера
+logger = get_logger()
 
 
 def log_success(message: str) -> None:
     """Логирует успешное выполнение операции."""
-    logging.info(f"Success: {message}")
+    logger.info(f"Success: {message}")
 
 
 def log_error(message: str) -> None:
     """Логирует ошибку при выполнении операции."""
-    logging.error(f"Error: {message}")
+    logger.error(f"Error: {message}")
 
 
 class ImageServer(BaseHTTPRequestHandler):
@@ -290,9 +285,13 @@ class ImageServer(BaseHTTPRequestHandler):
 if __name__ == "__main__":
     """Точка входа для запуска HTTP сервера."""
     server_address = ("0.0.0.0", 8000)
-    print(f"Starting server on {server_address[0]}:{server_address[1]}")
-    print("Server is running and waiting for connections...")
+    logger.info(f"Starting server on {server_address[0]}:{server_address[1]}")
+    logger.info("Server is running and waiting for connections...")
 
-    httpd = HTTPServer(server_address, ImageServer)
-    print("Server started on port 8000...")
-    httpd.serve_forever()
+    try:
+        httpd = HTTPServer(server_address, ImageServer)
+        logger.info("Server started on port 8000...")
+        httpd.serve_forever()
+    except Exception as e:
+        logger.critical(f"Failed to start server: {e}")
+        raise
