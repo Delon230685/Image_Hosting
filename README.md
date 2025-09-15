@@ -26,6 +26,7 @@
 [![Alpine Linux](https://img.shields.io/badge/alpine-3.18-0d597f.svg)](https://alpinelinux.org/)
 
 - **Backend**: Python 3.13
+- **Frontend**: JavaScript, CSS, HTML
 - **Web Server**: Nginx
 - **Контейнеризация**: Docker + Docker Compose
 - **Хранение данных**: Docker Volumes
@@ -45,20 +46,6 @@
 - docker-compose up --build
 - Откройте в браузере:
 http://localhost:8080
-
-## 🚀 Использование
-# Через веб-интерфейс:
-- Перейдите на главную страницу http://localhost:8080
-- Нажмите "Выберите файл" и выберите изображение
-- Нажмите "Загрузить"
-- Скопируйте ссылку на изображение из результата
-
-# Через API:
-- Загрузка изображения
-- curl -X POST -F "file=@your-image.jpg" http://localhost:8080/upload
-
-### Просмотр изображения:
-- http://localhost:8080/images/a1b2c3d4e5.jpg
 
 ## 📁 Структура проекта:
 ```
@@ -82,9 +69,9 @@ image-hosting/
 └── README.md            # Документация
 ```
 ### Поддерживаемые форматы:
-[![JPG](https://img.shields.io/badge/JPG-yellow.svg)
-[![PNG](https://img.shields.io/badge/PNG-blue.svg)
-[![GIF](https://img.shields.io/badge/GIF-lightgrey.svg)
+[![JPG](https://img.shields.io/badge/JPG-yellow.svg)]()
+[![PNG](https://img.shields.io/badge/PNG-blue.svg)]()
+[![GIF](https://img.shields.io/badge/GIF-lightgrey.svg)]()
 
 ### Ограничения:
 [![max-size-5MB](https://img.shields.io/badge/max--size-5MB-red.svg)
@@ -99,11 +86,11 @@ image-hosting/
 ## 🐳 Docker контейнеры:
 [![docker-build](https://img.shields.io/badge/docker-build-2496ED.svg)
 [![docker--compose-deploy](https://img.shields.io/badge/docker--compose-deploy-2496ED.svg)
-# Сервис состоит из двух контейнеров:
-- app
+## Сервис состоит из двух контейнеров:
+# app
 - Порт: 8000 (внутренний)
 - Volume: /images, /logs
-- nginx
+# nginx
 - Веб-сервер для статических файлов
 - Порт: 8080 (внешний)
 - Volume: /images
