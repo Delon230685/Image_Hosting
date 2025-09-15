@@ -1,0 +1,325 @@
+import os
+import json
+import logging
+import datetime
+from http.server import HTTPServer, BaseHTTPRequestHandler
+from urllib.parse import unquote
+from io import BytesIO
+from PIL import Image
+
+# Константы
+UPLOAD_DIR = "/images"
+LOG_FILE = "/logs/app.log"
+MAX_FILE_SIZE = 5 * 1024 * 1024  # 5 МБ
+ALLOWED_EXTENSIONS = (".jpg", ".jpeg", ".png", ".gif")
+
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+os.makedirs("/logs", exist_ok=True)
+
+# Настройка логирования
+logging.basicConfig(
+    filename=LOG_FILE,
+    level=logging.INFO,
+    format="[%(asctime)s] %(levelname)s: %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
+)
+
+
+def log_success(message):
+    logging.info(f"Success: {message}")
+
+
+def log_error(message):
+    logging.error(f"Error: {message}")
+
+
+class ImageServer(BaseHTTPRequestHandler):
+    protocol_version = 'HTTP/1.1'
+
+    def _set_cors_headers(self):
+        """Set CORS headers"""
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+
+    def _send_response(self, code, content_type, content, extra_headers=None):
+        """Universal response method"""
+        self.send_response(code)
+        self.send_header("Content-type", content_type)
+        self.send_header("Content-Length", str(len(content)))
+        self._set_cors_headers()
+
+        if extra_headers:
+            for key, value in extra_headers.items():
+                self.send_header(key, value)
+
+        self.end_headers()
+        self.wfile.write(content)
+
+    def do_OPTIONS(self):
+        """Handle OPTIONS requests for CORS"""
+        self.send_response(200)
+        self._set_cors_headers()
+        self.send_header("Content-Length", "0")
+        self.end_headers()
+
+    def do_GET(self):
+        """Handle GET requests"""
+        path = unquote(self.path)
+
+        if path == "/" or path == "/index.html":
+            try:
+                with open("/static/index.html", "rb") as f:
+                    content = f.read()
+                self._send_response(200, "text/html; charset=utf-8", content)
+            except Exception as e:
+                self.send_error(500, f"Server error: {e}")
+        elif path == "/favicon.ico":
+            try:
+                with open("/static/favicon.ico", "rb") as f:
+                    content = f.read()
+                self._send_response(200, "image/x-icon", content)
+            except:
+                self.send_error(404, "Not Found")
+        elif path.startswith("/images/"):
+            # Обслуживание фоновых изображений
+            filename = os.path.basename(path)
+            filepath = os.path.join("/images", filename)
+
+            # Защита от path traversal атак
+            filepath = os.path.abspath(filepath)
+            if not filepath.startswith(os.path.abspath("/images")):
+                self.send_error(403, "Access denied")
+                return
+
+            if os.path.isfile(filepath):
+                try:
+                    with open(filepath, "rb") as f:
+                        content = f.read()
+
+                    ext = os.path.splitext(filename)[1].lower()
+                    content_type = {
+                        ".jpg": "image/jpeg",
+                        ".jpeg": "image/jpeg",
+                        ".png": "image/png",
+                        ".gif": "image/gif",
+                        ".webp": "image/webp",
+                        ".svg": "image/svg+xml"
+                    }.get(ext, "application/octet-stream")
+
+                    self._send_response(200, content_type, content)
+                except Exception as e:
+                    self.send_error(500, f"Server error: {e}")
+            else:
+                self.send_error(404, "Image not found")
+        elif path.startswith(("/style.css", "/script.js", "/static/")):
+            # Serve static files
+            if path.startswith("/static/"):
+                filename = path[8:]  # remove "/static/" prefix
+            else:
+                filename = path[1:]  # remove leading "/"
+
+            static_path = os.path.join("/static", filename)
+
+            if os.path.isfile(static_path):
+                try:
+                    with open(static_path, "rb") as f:
+                        content = f.read()
+
+                    ext = os.path.splitext(filename)[1].lower()
+                    content_types = {
+                        ".css": "text/css",
+                        ".js": "application/javascript",
+                        ".html": "text/html",
+                        ".png": "image/png",
+                        ".jpg": "image/jpeg",
+                        ".jpeg": "image/jpeg",
+                        ".gif": "image/gif",
+                        ".ico": "image/x-icon",
+                        ".svg": "image/svg+xml",
+                        ".webp": "image/webp"
+                    }
+                    content_type = content_types.get(ext, "application/octet-stream")
+
+                    self._send_response(200, content_type, content)
+                except Exception as e:
+                    self.send_error(500, f"Server error: {e}")
+            else:
+                self.send_error(404, "File not found")
+        elif path.startswith("/assets/"):
+            # Serve assets
+            asset_path = os.path.join("/static", path[1:])  # remove leading "/"
+
+            if os.path.isfile(asset_path):
+                try:
+                    with open(asset_path, "rb") as f:
+                        content = f.read()
+
+                    ext = os.path.splitext(asset_path)[1].lower()
+                    content_types = {
+                        ".css": "text/css",
+                        ".js": "application/javascript",
+                        ".html": "text/html",
+                        ".png": "image/png",
+                        ".jpg": "image/jpeg",
+                        ".jpeg": "image/jpeg",
+                        ".gif": "image/gif",
+                        ".ico": "image/x-icon",
+                        ".svg": "image/svg+xml",
+                        ".webp": "image/webp"
+                    }
+                    content_type = content_types.get(ext, "application/octet-stream")
+
+                    self._send_response(200, content_type, content)
+                except Exception as e:
+                    self.send_error(500, f"Server error: {e}")
+            else:
+                self.send_error(404, "Asset not found")
+        else:
+            self.send_error(404, "Page not found")
+
+    def do_POST(self):
+        """Handle POST requests to /upload"""
+        if self.path != "/upload":
+            self.send_error(404, "Route not found")
+            return
+
+        content_type = self.headers.get("Content-Type", "")
+        if "multipart/form-data" not in content_type:
+            self.send_error(400, "Invalid content type. Expected multipart/form-data")
+            return
+
+        try:
+            # Извлекаем boundary более надежным способом
+            import re
+            match = re.search(r'boundary=([^;]+)', content_type)
+            if not match:
+                self.send_error(400, "Could not find boundary in Content-Type")
+                return
+
+            boundary_token = match.group(1).strip()
+            # Кодируем boundary для использования в бинарном режиме
+            boundary = f"--{boundary_token}".encode('utf-8')
+
+            content_length = int(self.headers.get("Content-Length", 0))
+            if content_length == 0:
+                self.send_error(400, "Empty request body")
+                return
+
+            # Читаем тело запроса
+            body = self.rfile.read(content_length)
+
+            # Разделяем тело на части по boundary
+            parts = body.split(boundary)
+            file_data = None
+            filename = None
+
+            for part in parts:
+                # Пропускаем пустые части и заключительный разделитель
+                if not part or part.strip() == b'--':
+                    continue
+
+                # Ищем заголовки в части
+                header_end = part.find(b'\r\n\r\n')
+                if header_end == -1:
+                    # Если не нашли разделитель с \r\n, пробуем с \n\n
+                    header_end = part.find(b'\n\n')
+                    if header_end == -1:
+                        log_error("Malformed part: no header separator found")
+                        continue
+                    else:
+                        headers_part = part[:header_end]
+                        data_part = part[header_end + 2:]  # +2 для \n\n
+                else:
+                    headers_part = part[:header_end]
+                    data_part = part[header_end + 4:]  # +4 для \r\n\r\n
+
+                # Декодируем заголовки для анализа
+                try:
+                    headers_text = headers_part.decode('utf-8', errors='ignore')
+                except UnicodeDecodeError:
+                    log_error("Could not decode headers")
+                    continue
+
+                # Ищем нужное поле с файлом
+                if 'name="file"' in headers_text and 'filename="' in headers_text:
+                    # Извлекаем имя файла
+                    filename_match = re.search(r'filename="([^"]+)"', headers_text)
+                    if filename_match:
+                        filename = filename_match.group(1)
+
+                    # Извлекаем данные файла (обрезаем trailing \r\n)
+                    file_data = data_part.rstrip(b'\r\n')
+                    break
+
+            if not file_data or not filename:
+                self.send_error(400, "No file was uploaded or file field is missing")
+                return
+
+            # Проверяем расширение файла
+            ext = os.path.splitext(filename)[1].lower()
+            if ext not in ALLOWED_EXTENSIONS:
+                log_error(f"Unsupported file format: {filename}")
+                self.send_error(400, f"Unsupported file format. Allowed: {', '.join(ALLOWED_EXTENSIONS)}")
+                return
+
+            # Проверяем размер файла
+            if len(file_data) > MAX_FILE_SIZE:
+                log_error(f"File too large: {filename} ({len(file_data)} bytes)")
+                self.send_error(400, f"File too large. Maximum size is {MAX_FILE_SIZE} bytes")
+                return
+
+            # Проверяем, что файл является валидным изображением
+            try:
+                with Image.open(BytesIO(file_data)) as img:
+                    img.verify()
+            except Exception as e:
+                log_error(f"Invalid image file: {filename} - {str(e)}")
+                self.send_error(400, "Invalid image file")
+                return
+
+            # Генерируем уникальное имя и сохраняем файл
+            timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
+            unique_name = f"{timestamp}{ext}"
+            filepath = os.path.join(UPLOAD_DIR, unique_name)
+
+            try:
+                with open(filepath, "wb") as f:
+                    f.write(file_data)
+
+                log_success(f"Image uploaded successfully: {unique_name} (original: {filename})")
+
+                response_data = json.dumps({
+                    "status": "success",
+                    "message": "File uploaded successfully",
+                    "url": f"/images/{unique_name}"
+                }).encode("utf-8")
+
+                self._send_response(200, "application/json", response_data)
+
+            except Exception as e:
+                log_error(f"Failed to save file: {str(e)}")
+                self.send_error(500, "Failed to save file on server")
+
+        except Exception as e:
+            log_error(f"Unexpected error during file upload: {str(e)}")
+            self.send_error(500, "Internal server error during file processing")
+
+    def send_error(self, code, message):
+        """Override error sending method"""
+        error_json = json.dumps({"status": "error", "message": message}).encode("utf-8")
+        self.send_response(code)
+        self.send_header("Content-type", "application/json")
+        self.send_header("Content-Length", str(len(error_json)))
+        self._set_cors_headers()
+        self.end_headers()
+        self.wfile.write(error_json)
+
+
+if __name__ == "__main__":
+    server_address = ("0.0.0.0", 8000)
+    print(f"Starting server on {server_address[0]}:{server_address[1]}")
+    print("Server is running and waiting for connections...")
+    httpd = HTTPServer(server_address, ImageServer)
+    print("Server started on port 8000...")
+    httpd.serve_forever()
