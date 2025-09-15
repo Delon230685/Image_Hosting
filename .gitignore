@@ -1,2 +1,7 @@
 images/
 logs/
+/logs/*.log
+*.log
+.env
+.idea/
+__pycache__/

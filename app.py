@@ -13,6 +13,20 @@ LOG_FILE = "/logs/app.log"
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5 МБ
 ALLOWED_EXTENSIONS = (".jpg", ".jpeg", ".png", ".gif")
 
+# Единый словарь для MIME-типов
+CONTENT_TYPES = {
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".png": "image/png",
+    ".gif": "image/gif",
+    ".css": "text/css",
+    ".js": "application/javascript",
+    ".html": "text/html",
+    ".ico": "image/x-icon",
+    ".svg": "image/svg+xml",
+    ".webp": "image/webp"
+}
+
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs("/logs", exist_ok=True)
 
@@ -82,13 +96,13 @@ class ImageServer(BaseHTTPRequestHandler):
             except:
                 self.send_error(404, "Not Found")
         elif path.startswith("/images/"):
-            # Обслуживание фоновых изображений
+            # Обслуживание изображений
             filename = os.path.basename(path)
-            filepath = os.path.join("/images", filename)
+            filepath = os.path.join(UPLOAD_DIR, filename)
 
             # Защита от path traversal атак
             filepath = os.path.abspath(filepath)
-            if not filepath.startswith(os.path.abspath("/images")):
+            if not filepath.startswith(os.path.abspath(UPLOAD_DIR)):
                 self.send_error(403, "Access denied")
                 return
 
@@ -98,14 +112,7 @@ class ImageServer(BaseHTTPRequestHandler):
                         content = f.read()
 
                     ext = os.path.splitext(filename)[1].lower()
-                    content_type = {
-                        ".jpg": "image/jpeg",
-                        ".jpeg": "image/jpeg",
-                        ".png": "image/png",
-                        ".gif": "image/gif",
-                        ".webp": "image/webp",
-                        ".svg": "image/svg+xml"
-                    }.get(ext, "application/octet-stream")
+                    content_type = CONTENT_TYPES.get(ext, "application/octet-stream")
 
                     self._send_response(200, content_type, content)
                 except Exception as e:
@@ -127,54 +134,13 @@ class ImageServer(BaseHTTPRequestHandler):
                         content = f.read()
 
                     ext = os.path.splitext(filename)[1].lower()
-                    content_types = {
-                        ".css": "text/css",
-                        ".js": "application/javascript",
-                        ".html": "text/html",
-                        ".png": "image/png",
-                        ".jpg": "image/jpeg",
-                        ".jpeg": "image/jpeg",
-                        ".gif": "image/gif",
-                        ".ico": "image/x-icon",
-                        ".svg": "image/svg+xml",
-                        ".webp": "image/webp"
-                    }
-                    content_type = content_types.get(ext, "application/octet-stream")
+                    content_type = CONTENT_TYPES.get(ext, "application/octet-stream")
 
                     self._send_response(200, content_type, content)
                 except Exception as e:
                     self.send_error(500, f"Server error: {e}")
             else:
                 self.send_error(404, "File not found")
-        elif path.startswith("/assets/"):
-            # Serve assets
-            asset_path = os.path.join("/static", path[1:])  # remove leading "/"
-
-            if os.path.isfile(asset_path):
-                try:
-                    with open(asset_path, "rb") as f:
-                        content = f.read()
-
-                    ext = os.path.splitext(asset_path)[1].lower()
-                    content_types = {
-                        ".css": "text/css",
-                        ".js": "application/javascript",
-                        ".html": "text/html",
-                        ".png": "image/png",
-                        ".jpg": "image/jpeg",
-                        ".jpeg": "image/jpeg",
-                        ".gif": "image/gif",
-                        ".ico": "image/x-icon",
-                        ".svg": "image/svg+xml",
-                        ".webp": "image/webp"
-                    }
-                    content_type = content_types.get(ext, "application/octet-stream")
-
-                    self._send_response(200, content_type, content)
-                except Exception as e:
-                    self.send_error(500, f"Server error: {e}")
-            else:
-                self.send_error(404, "Asset not found")
         else:
             self.send_error(404, "Page not found")
 
@@ -190,7 +156,7 @@ class ImageServer(BaseHTTPRequestHandler):
             return
 
         try:
-            # Извлекаем boundary более надежным способом
+            # Извлекаем boundary
             import re
             match = re.search(r'boundary=([^;]+)', content_type)
             if not match:
@@ -198,7 +164,6 @@ class ImageServer(BaseHTTPRequestHandler):
                 return
 
             boundary_token = match.group(1).strip()
-            # Кодируем boundary для использования в бинарном режиме
             boundary = f"--{boundary_token}".encode('utf-8')
 
             content_length = int(self.headers.get("Content-Length", 0))
@@ -215,40 +180,29 @@ class ImageServer(BaseHTTPRequestHandler):
             filename = None
 
             for part in parts:
-                # Пропускаем пустые части и заключительный разделитель
                 if not part or part.strip() == b'--':
                     continue
 
-                # Ищем заголовки в части
                 header_end = part.find(b'\r\n\r\n')
                 if header_end == -1:
-                    # Если не нашли разделитель с \r\n, пробуем с \n\n
                     header_end = part.find(b'\n\n')
                     if header_end == -1:
-                        log_error("Malformed part: no header separator found")
                         continue
-                    else:
-                        headers_part = part[:header_end]
-                        data_part = part[header_end + 2:]  # +2 для \n\n
+                    headers_part = part[:header_end]
+                    data_part = part[header_end + 2:]
                 else:
                     headers_part = part[:header_end]
-                    data_part = part[header_end + 4:]  # +4 для \r\n\r\n
+                    data_part = part[header_end + 4:]
 
-                # Декодируем заголовки для анализа
                 try:
                     headers_text = headers_part.decode('utf-8', errors='ignore')
                 except UnicodeDecodeError:
-                    log_error("Could not decode headers")
                     continue
 
-                # Ищем нужное поле с файлом
                 if 'name="file"' in headers_text and 'filename="' in headers_text:
-                    # Извлекаем имя файла
                     filename_match = re.search(r'filename="([^"]+)"', headers_text)
                     if filename_match:
                         filename = filename_match.group(1)
-
-                    # Извлекаем данные файла (обрезаем trailing \r\n)
                     file_data = data_part.rstrip(b'\r\n')
                     break
 
