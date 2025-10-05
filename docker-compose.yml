@@ -1,17 +1,36 @@
-version: '3.8'
-
 services:
   app:
     build: .
     ports:
-      - "8000:8000"
+      - "8000:8000"  # Оставляем для прямого доступа
     volumes:
-      - ./image:/images  # Папка image для загруженных картинок
-      - ./logs:/logs
-      - ./static:/static # Вся статика в static
-    networks:
-      - app-network
+      - ./image:/app/image
+      - ./logs:/app/logs
+      - ./static:/app/static
+      - ./backups:/app/backups
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@db:5432/images_db
+    depends_on:
+      db:
+        condition: service_healthy
     restart: unless-stopped
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=images_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backups:/backups
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   nginx:
     image: nginx:alpine
@@ -19,14 +38,12 @@ services:
       - "8080:80"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./image:/images    # Загруженные изображения
-      - ./static:/static   # Статические файлы
+      - ./image:/images
+      - ./static:/static
     depends_on:
-      - app
-    networks:
-      - app-network
+      app:
+        condition: service_started
     restart: unless-stopped
 
-networks:
-  app-network:
-    driver: bridge
+volumes:
+  postgres_data:

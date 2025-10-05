@@ -47,22 +47,55 @@
              </div>
 
              <div id="images-view" class="hidden">
-                 <ul id="image-list" class="image-list">
-                 </ul>
-                 <template id="image-item-template">
-                     <li class="image-item">
-                         <div class="image-item__name">
-                             <i class="fas fa-file-image"></i>
-                             <span>file-name.jpg</span>
+                 <div class="images-header">
+                     <h2>Uploaded Images</h2>
+                     <div class="images-stats">
+                         <span id="images-count">Total: 0 images</span>
+                     </div>
+                 </div>
+
+                 <div class="images-table-container">
+                     <table class="images-table">
+                         <thead>
+                             <tr>
+                                 <th>Filename</th>
+                                 <th>Original Name</th>
+                                 <th>Size (KB)</th>
+                                 <th>Upload Date</th>
+                                 <th>Type</th>
+                                 <th>Actions</th>
+                             </tr>
+                         </thead>
+                         <tbody id="images-table-body">
+                             <!-- Images will be inserted here by JavaScript -->
+                         </tbody>
+                     </table>
+                 </div>
+
+                 <!-- Пагинация -->
+                 <div class="pagination-container">
+                     <div class="pagination">
+                         <button id="prev-page" class="pagination-btn" disabled>
+                             <i class="fas fa-chevron-left"></i> Previous
+                         </button>
+                         <div class="page-numbers" id="page-numbers">
+                             <!-- Page numbers will be inserted here -->
                          </div>
-                         <div class="image-item__url">
-                             <a href="#" target="_blank">https://sharefile.xyz/file.jpg</a>
-                         </div>
-                         <div class="image-item__delete">
-                             <button class="delete-btn"><i class="fas fa-trash-alt"></i></button>
-                         </div>
-                     </li>
-                 </template>
+                         <button id="next-page" class="pagination-btn" disabled>
+                             Next <i class="fas fa-chevron-right"></i>
+                         </button>
+                     </div>
+                     <div class="pagination-info">
+                         Page <span id="current-page">1</span> of <span id="total-pages">1</span>
+                     </div>
+                 </div>
+
+                 <!-- Сообщение когда нет изображений -->
+                 <div id="no-images-message" class="no-images-message hidden">
+                     <i class="fas fa-image"></i>
+                     <h3>No images uploaded yet</h3>
+                     <p>Upload your first image using the upload section</p>
+                 </div>
              </div>
          </div>
      </div>
