@@ -133,6 +133,16 @@ image-hosting/
 - Кнопка "Удалить" для каждого изображения
 - Пагинация (по 10 изображений на странице)
 
+## 💾 Резервное копирование
+- Автоматическое резервное копирование
+# Создание резервной копии вручную
+docker exec -t image-hosting-db-1 pg_dump -U postgres images_db > backups/backup_$(date +%Y-%m-%d_%H%M%S).sql
+# Использование скрипта
+- python backup_script.py
+- Восстановление из резервной копии
+docker exec -i image-hosting-db-1 psql -U postgres images_db < backups/backup_2024-01-24_153000.sql
+# Резервные копии сохраняются в папке /backups с timestamp в имени файла.
+
 ## 🐳 Docker контейнеры:
 [![docker-build](https://img.shields.io/badge/docker-build-2496ED.svg)]()
 [![docker--compose-deploy](https://img.shields.io/badge/docker--compose-deploy-2496ED.svg)]()
