@@ -137,10 +137,12 @@ image-hosting/
 - Автоматическое резервное копирование
 # Создание резервной копии вручную
 docker exec -t image_hosting_20-db-1 pg_dump -U postgres images_db > backups/backup_$(Get-Date -Format "yyyy-MM-dd_HHmmss").sql
+
 # Использование скрипта
 - python backup_script.py
 - Восстановление из резервной копии
 docker exec -i image_hosting_20-db-1 psql -U postgres images_db < backups/backup_2025-10-01_153000.sql
+
 # Резервные копии сохраняются в папке /backups с timestamp в имени файла.
 
 ## 🐳 Docker контейнеры:
